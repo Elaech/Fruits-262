@@ -1,0 +1,45 @@
+def get_model(input_shape, outputs_number, lr):
+    model = tf.keras.Sequential()
+    model.add(layers.InputLayer(input_shape=input_shape))
+    model.add(layers.Lambda(flip_left_right))
+    model.add(layers.Lambda(flip_up_down))
+    model.add(layers.Lambda(grey_norm_hsv))
+    model.add(layers.Lambda(rescale))
+    model.add(layers.Conv2D(filters=64, kernel_size=(11, 11), padding="same", activation="relu"))
+    model.add(layers.MaxPool2D(pool_size=(3, 3), strides=2))
+    model.add(layers.Conv2D(filters=128, kernel_size=(5, 5), padding="same", activation="relu"))
+    model.add(layers.MaxPool2D(pool_size=(3, 3), strides=2))
+    model.add(layers.Conv2D(filters=256, kernel_size=(3, 3), activation="relu"))
+    model.add(layers.Conv2D(filters=256, kernel_size=(3, 3), activation="relu"))
+    model.add(layers.Conv2D(filters=256, kernel_size=(3, 3), activation="relu"))
+    model.add(layers.MaxPool2D(pool_size=(3, 3), strides=2))
+    model.add(layers.Flatten())
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(units=1024, activation="relu"))
+    model.add(layers.Dropout(0.5))
+    model.add(layers.Dense(units=1024, activation="relu"))
+    model.add(layers.Dense(units=outputs_number, activation="softmax"))
+    optimizer = keras.optimizers.Adam(learning_rate=lr)
+    model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer=optimizer, metrics=["accuracy"])
+    return model
+
+
+def load_and_craft_model(input_shape, outputs_number, lr, path):
+    return keras.models.load_model(path)
+
+
+if __name__ == '__main__':
+    load_dictionaries()
+    # Adam and Adamax
+    # HYPER PARAMETERS
+    MODEL_ID = 22
+    WIDTH = 52
+    HEIGHT = 64
+    CHANNELS = 3
+    BATCH_SIZE = 256
+    LABELS = 262
+    EPOCHS = 20
+    PACK_EPOCHS = 1
+    T_PACK_SIZE = 1
+    V_PACK_SIZE = 1
+    LR = 0.00025

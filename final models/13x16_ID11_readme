@@ -1,0 +1,37 @@
+def get_model(input_shape, outputs_number, lr):
+    model = tf.keras.Sequential()
+    model.add(layers.InputLayer(input_shape=input_shape))
+    model.add(layers.Lambda(rescale))
+    model.add(layers.Conv2D(filters=128, kernel_size=(5, 5), input_shape=input_shape, padding='same', activation="relu"))
+    model.add(layers.MaxPool2D())
+    model.add(layers.Conv2D(filters=256, kernel_size=(5, 5), padding='same', activation="relu"))
+    model.add(layers.MaxPool2D())
+    model.add(layers.Conv2D(filters=512, kernel_size=(3, 3), padding='same', activation="relu"))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(units=1024, activation="relu"))
+    model.add(layers.Dropout(0.2))
+    model.add(layers.Dense(units=512, activation="relu"))
+    model.add(layers.Dropout(0.2))
+    model.add(layers.Dense(units=outputs_number, activation="softmax"))
+    optimizer = keras.optimizers.Adam(learning_rate=lr)
+    model.compile(loss=tf.keras.losses.SparseCategoricalCrossentropy(), optimizer=optimizer, metrics=["accuracy"])
+    return model
+
+        # HYPER PARAMETERS
+    MODEL_ID = 11
+    WIDTH = 13
+    HEIGHT = 16
+    CHANNELS = 3
+    BATCH_SIZE = 256
+    LABELS = 262
+    EPOCHS = 100
+    PACK_EPOCHS = 1
+    T_PACK_SIZE = 1
+    V_PACK_SIZE = 1
+    LR = 0.0001
+    PRELOAD_DATA = False
+    LOAD_MODEL = False
+
+
+    72s
+    42-43%
